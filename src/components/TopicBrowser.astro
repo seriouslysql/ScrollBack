@@ -1,0 +1,155 @@
+---
+import { getCollection } from "astro:content";
+import { getTopics } from "@/utils/getTopics";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+// Topics are detected automatically from your posts.
+// See `topics` in astro-paper.config.ts to change what is shown.
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+const posts = await getCollection("posts");
+const topics = getTopics(posts, locale);
+const { maxVisible } = config.topics;
+---
+
+{
+  topics.length > 0 && (
+    <section
+      class="topic-browser"
+      data-more={t.home.showMoreTopics}
+      data-fewer={t.home.showFewerTopics}
+    >
+      <h2>{t.home.browseByTopic}</h2>
+      <ul class="topic-list">
+        {topics.map((topic, index) => (
+          <li
+            class:list={["topic-item", index >= maxVisible && "topic-hidden"]}
+          >
+            <a href={topic.href} class="topic-link">
+              <span class="topic-label">{topic.label}</span>
+              <span class="topic-count">
+                {topic.count}&nbsp;
+                {topic.count === 1 ? t.home.postOne : t.home.postOther}
+              </span>
+              {topic.description && (
+                <span class="topic-desc">{topic.description}</span>
+              )}
+            </a>
+          </li>
+        ))}
+      </ul>
+      {topics.length > maxVisible && (
+        <button id="topic-expand" class="topic-expand-btn" type="button">
+          {t.home.showMoreTopics}
+        </button>
+      )}
+    </section>
+  )
+}
+
+<style>
+  .topic-browser {
+    margin: 2rem 0;
+  }
+  .topic-browser h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--foreground);
+  }
+  .topic-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    align-items: stretch;
+  }
+  .topic-item {
+    height: 100%;
+  }
+  .topic-link {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.15rem 0.5rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--muted);
+    text-decoration: none;
+    transition:
+      border-color 0.15s ease,
+      opacity 0.15s ease;
+    align-content: start;
+    height: 100%;
+  }
+  .topic-link:hover {
+    border-color: var(--accent);
+    opacity: 0.85;
+  }
+  .topic-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--accent);
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .topic-count {
+    font-size: 0.75rem;
+    color: var(--foreground);
+    opacity: 0.6;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: center;
+    white-space: nowrap;
+  }
+  .topic-desc {
+    font-size: 0.8rem;
+    color: var(--foreground);
+    opacity: 0.7;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    line-height: 1.4;
+  }
+  .topic-hidden {
+    display: none;
+  }
+  .topic-expand-btn {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--accent);
+    background: none;
+    border: none;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .topic-expand-btn:hover {
+    opacity: 0.75;
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const section = document.querySelector<HTMLElement>(".topic-browser");
+    const btn = document.getElementById("topic-expand");
+    const items = document.querySelectorAll<HTMLElement>(".topic-item");
+    if (!section || !btn) return;
+
+    const limit =
+      items.length - document.querySelectorAll(".topic-hidden").length;
+    let expanded = false;
+
+    btn.addEventListener("click", () => {
+      expanded = !expanded;
+      items.forEach((el, i) => {
+        if (i >= limit) el.classList.toggle("topic-hidden", !expanded);
+      });
+      btn.textContent = expanded
+        ? (section.dataset.fewer ?? "")
+        : (section.dataset.more ?? "");
+    });
+  });
+</script>

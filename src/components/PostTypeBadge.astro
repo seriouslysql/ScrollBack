@@ -1,0 +1,32 @@
+---
+import config from "@/config";
+
+type Props = {
+  postType: string;
+};
+
+const { postType } = Astro.props;
+
+// Colour comes from `postTypes` in astro-paper.config.ts; unknown types are grey.
+const color = config.postTypes[postType] ?? "gray";
+---
+
+<span
+  class="post-type-badge"
+  style={`background: var(--badge-${color}-bg); color: var(--badge-${color}-text);`}
+>
+  {postType}
+</span>
+
+<style>
+  .post-type-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+</style>

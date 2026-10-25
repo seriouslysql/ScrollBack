@@ -1,0 +1,67 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPathsOptions } from "astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Main from "@/components/Main.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Card from "@/components/Card.astro";
+import Footer from "@/components/Footer.astro";
+import Pagination from "@/components/Pagination.astro";
+import { getUniqueCategories } from "@/utils/getUniqueCategories";
+import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getTopicInfo } from "@/utils/getTopics";
+import { slugifyStr } from "@/utils/slugify";
+import { useTranslations } from "@/i18n";
+import config from "@/config";
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  const categories = getUniqueCategories(posts);
+
+  return categories.flatMap(({ category, categoryName }) => {
+    const categoryPosts = getSortedPosts(
+      posts.filter(
+        ({ data }) => data.category && slugifyStr(data.category) === category
+      )
+    );
+
+    return paginate(categoryPosts, {
+      params: { category },
+      props: { categoryName },
+      pageSize: config.posts.perPage,
+    });
+  });
+}
+
+const { category } = Astro.params;
+const { page, categoryName } = Astro.props;
+
+const locale = Astro.currentLocale ?? config.site.lang;
+const t = useTranslations(locale);
+
+const topic = getTopicInfo(category, categoryName, "category");
+const description =
+  topic.description ?? `${t.pages.categoryDesc} "${topic.label}".`;
+---
+
+<Layout
+  title={`${t.pages.categoryTitle}: ${topic.label} | ${config.site.title}`}
+>
+  <Header />
+
+  <Breadcrumb />
+
+  <Main
+    pageTitle={`${t.pages.categoryTitle}: ${topic.label}`}
+    pageDesc={description}
+  >
+    <ul>
+      {page.data.map(data => <Card {...data} />)}
+    </ul>
+  </Main>
+
+  <Pagination {page} />
+
+  <Footer noMarginTop={page.lastPage > 1} />
+</Layout>

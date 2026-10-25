@@ -1,0 +1,54 @@
+/* Register design tokens for Tailwind v4 */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --font-app: var(--font-google-sans-code);
+}
+
+/* Light theme values */
+:root,
+[data-theme="light"] {
+  --background: #fdfdfd;
+  --foreground: #282728;
+  --accent: #006cac;
+  --accent-foreground: #ffffff;
+  --muted: #e6e6e6;
+  --muted-foreground: #6b7280;
+  --border: #ece9e9;
+  --badge-blue-bg: rgba(86, 156, 214, 0.15);
+  --badge-blue-text: #1a5a8a;
+  --badge-orange-bg: rgba(255, 107, 53, 0.15);
+  --badge-orange-text: #b84000;
+  --badge-teal-bg: rgba(78, 201, 176, 0.15);
+  --badge-teal-text: #0e6e5e;
+  --badge-purple-bg: rgba(150, 100, 200, 0.15);
+  --badge-purple-text: #5a2d8a;
+  --badge-gray-bg: rgba(128, 128, 128, 0.15);
+  --badge-gray-text: #444444;
+}
+
+/* Dark theme values */
+[data-theme="dark"] {
+  --background: #212737;
+  --foreground: #eaedf3;
+  --accent: #ff6b01;
+  --accent-foreground: #ffffff;
+  --muted: #343f60;
+  --muted-foreground: #afb9ca;
+  --border: #ab4b08;
+  --badge-blue-bg: rgba(86, 156, 214, 0.2);
+  --badge-blue-text: #7ec8f5;
+  --badge-orange-bg: rgba(255, 107, 53, 0.2);
+  --badge-orange-text: #ff9a6c;
+  --badge-teal-bg: rgba(78, 201, 176, 0.2);
+  --badge-teal-text: #4ec9b0;
+  --badge-purple-bg: rgba(150, 100, 200, 0.2);
+  --badge-purple-text: #c39aff;
+  --badge-gray-bg: rgba(128, 128, 128, 0.2);
+  --badge-gray-text: #aaaaaa;
+}

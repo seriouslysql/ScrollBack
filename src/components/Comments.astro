@@ -1,0 +1,28 @@
+---
+import config from "@/config";
+
+const comments = config.comments;
+const { enabled, provider, giscus } = comments ?? {};
+---
+
+{enabled && provider === "giscus" && giscus?.repo && (
+  <div class="mt-8">
+    <script
+      is:inline
+      src="https://giscus.app/client.js"
+      data-repo={giscus.repo}
+      data-repo-id={giscus.repoId}
+      data-category={giscus.category}
+      data-category-id={giscus.categoryId}
+      data-mapping={giscus.mapping}
+      data-strict={giscus.strict}
+      data-reactions-enabled={giscus.reactionsEnabled}
+      data-emit-metadata={giscus.emitMetadata}
+      data-input-position={giscus.inputPosition}
+      data-theme="preferred_color_scheme"
+      data-lang={giscus.lang}
+      crossorigin="anonymous"
+      async
+    ></script>
+  </div>
+)}
